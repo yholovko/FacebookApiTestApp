@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">FacebookTask</string>
+    <string name="facebook_app_id">132267307151745</string>
+
+    <string name="invalid_token">Please login again</string>
+
+    <string name="sure_exit_dialog">Are you sure you want to exit?</string>
+    <string name="sure_exit_dialog_yes">YES</string>
+    <string name="sure_exit_dialog_no">NO</string>
+
+    <string name="login_error">Login failed. Please try again</string>
+</resources>
