@@ -9,4 +9,5 @@
     <string name="sure_exit_dialog_no">NO</string>
 
     <string name="login_error">Login failed. Please try again</string>
+    <string name="camera_perm_denied">Camera permission denied</string>
 </resources>

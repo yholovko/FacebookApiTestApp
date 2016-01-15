@@ -1,6 +1,8 @@
 package com.androidapp.test.facebooktask.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidapp.test.facebooktask.R;
 import com.bumptech.glide.Glide;
@@ -20,9 +23,10 @@ import com.facebook.GraphResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class UserProfileActivity extends AppCompatActivity{
+public class UserProfileActivity extends AppCompatActivity {
     private static final String TAG = UserProfileActivity.class.getName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_ASK_CAMERA_PERMISSIONS = 2;
 
     private ImageView profilePictureView;
     private TextView userName;
@@ -36,6 +40,13 @@ public class UserProfileActivity extends AppCompatActivity{
         profilePictureView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //request camera permission in android api 23+
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_ASK_CAMERA_PERMISSIONS);
+                        return;
+                    }
+                }
                 dispatchTakePictureIntent();
             }
         });
@@ -44,8 +55,7 @@ public class UserProfileActivity extends AppCompatActivity{
         GraphRequest userProfileRequest = GraphRequest.newMeRequest(AccessToken.getCurrentAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
-                Log.v(TAG, response.toString());
-
+                Log.i(TAG, response.toString());
                 JSONObject obj = response.getJSONObject();
                 try {
                     //creating animation
@@ -56,7 +66,7 @@ public class UserProfileActivity extends AppCompatActivity{
                     spinnerAnimation.start();
 
                     Glide.with(getApplicationContext())
-                            .load("http://graph.facebook.com/"+ obj.getString("id") + "/picture?type=large")
+                            .load("http://graph.facebook.com/" + obj.getString("id") + "/picture?type=large")
                             .placeholder(spinnerAnimation)
                             .into(profilePictureView);
 
@@ -85,6 +95,25 @@ public class UserProfileActivity extends AppCompatActivity{
             Bundle extras = data.getExtras();
             Bitmap imageBitmap = (Bitmap) extras.get("data");
             profilePictureView.setImageBitmap(imageBitmap);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_ASK_CAMERA_PERMISSIONS: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.i(TAG, "Manifest.permission.CAMERA granted");
+                    dispatchTakePictureIntent();
+                } else {
+                    Log.i(TAG, "Manifest.permission.CAMERA denied");
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.camera_perm_denied), Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
         }
     }
 }
