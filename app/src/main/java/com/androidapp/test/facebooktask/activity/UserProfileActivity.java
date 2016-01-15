@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -66,7 +67,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     spinnerAnimation.start();
 
                     Glide.with(getApplicationContext())
-                            .load("http://graph.facebook.com/" + obj.getString("id") + "/picture?type=large")
+                            .load(String.format("http://graph.facebook.com/%s/picture?type=large", obj.getString("id")))
                             .placeholder(spinnerAnimation)
                             .into(profilePictureView);
 
@@ -99,7 +100,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_ASK_CAMERA_PERMISSIONS: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {

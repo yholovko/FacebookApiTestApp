@@ -9,8 +9,8 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 
-public class Application extends android.app.Application {
-    private static final String TAG = "Application";
+public class FacebookApiInitialization extends android.app.Application {
+    private static final String TAG = FacebookApiInitialization.class.getName();
 
     @Override
     public void onCreate() {
@@ -27,6 +27,7 @@ public class Application extends android.app.Application {
                 }
             }
         };
+
         mAccessTokenTracker.startTracking();
     }
 }
